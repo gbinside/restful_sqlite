@@ -1,0 +1,9 @@
+BASE=http://192.168.33.1:8080/v1
+$(BASE)/temptable/drop
+$(BASE)/temptable POST {"id": "INTEGER PRIMARY KEY ASC", "x": "", "y": "", "z": ""}
+$(BASE)
+$(BASE)/temptable/insert POST {"y":1,"z":"gatto"}
+$(BASE)/temptable/select
+$(BASE)/temptable/select POST {"conditions":{"z":{"eq":"gatto"}}}
+$(BASE)/temptable/delete POST {"conditions":{"z":{"eq":"gatto"}}}
+$(BASE)/temptable/select
