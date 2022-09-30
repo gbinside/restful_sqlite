@@ -159,7 +159,7 @@ def test(argv):
         fs = [globals()[x] for x in globals() if
               inspect.isfunction(globals()[x]) and x.startswith('test') and x != my_name]
         for f in fs:
-            print f.__name__
+            print(f.__name__)
             f()
 
 

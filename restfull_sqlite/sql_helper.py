@@ -1,8 +1,8 @@
-__author__ = 'roberto'
+__author__ = "roberto"
 
 DELETE_FROM = "DELETE FROM `%s` WHERE (%s);"
 WHERE = " WHERE (%s) "
-AND = ' AND '
+AND = " AND "
 SELECT_ALL_FROM = "SELECT * FROM `%s`"
 CREATE_TABLE = "CREATE TABLE `%s` (%s);"
 PRAGMA_TABLE_INFO = "PRAGMA table_info(`%s`);"
@@ -12,16 +12,16 @@ LIST_TABLE = "SELECT name FROM sqlite_master WHERE type='table';"
 INSERT_INTO = "INSERT INTO `%s` (%s) VALUES (%s);"
 
 OPERATOR_MAP = {
-    'eq': '=?',
-    'gt': '>?',
-    'lt': '<?',
-    'gte': '>=?',
-    'lte': '<=?',
-    'gteq': '>=?',
-    'lteq': '<=?',
-    'isnotnull': ' IS NOT NULL ',
-    'isnull': ' IS NOT NULL ',
-    'like': ' LIKE ? '
+    "eq": "=?",
+    "gt": ">?",
+    "lt": "<?",
+    "gte": ">=?",
+    "lte": "<=?",
+    "gteq": ">=?",
+    "lteq": "<=?",
+    "isnotnull": " IS NOT NULL ",
+    "isnull": " IS NOT NULL ",
+    "like": " LIKE ? "
     # @todo aggiungere operatori -- add more operators
 }
 
@@ -32,7 +32,7 @@ def _create_where(conditions, values):
         for operator, value in conditions[field].items():
             sql_operator = OPERATOR_MAP[operator]
             _where.append("`%s`%s" % (field, sql_operator))
-            if '?' in sql_operator:
+            if "?" in sql_operator:
                 values.append(value)
     return _where
 
@@ -47,15 +47,15 @@ def list_table():
 
 def insert(tablename, data):
     values = data.values()
-    fields = ' , '.join([k for k, v in data.items()])
-    markplace = ' , '.join(['?' for k, v in data.items()])
+    fields = " , ".join([k for k, v in data.items()])
+    markplace = " , ".join(["?" for k, v in data.items()])
     sql = INSERT_INTO % (tablename, fields, markplace)
     return sql, values
 
 
 def update(tablename, conditions, data):
     values = data.values()
-    _set = ','.join(['`%s`=?' % k for k in data])
+    _set = ",".join(["`%s`=?" % k for k in data])
     _where = _create_where(conditions, values)
     _where = AND.join(_where)
     sql = UPDATE % (tablename, _set, _where)
@@ -67,7 +67,7 @@ def table_info(tablename):
 
 
 def create_table(tablename, data):
-    fields = ' , '.join(['`' + k + '` ' + v for k, v in data.items()])
+    fields = " , ".join(["`" + k + "` " + v for k, v in data.items()])
     sql = CREATE_TABLE % (tablename, fields)
     return sql
 
@@ -79,7 +79,7 @@ def select(tablename, conditions):
     if _where:
         _where = AND.join(_where)
         sql += WHERE % _where
-    sql += ';'
+    sql += ";"
     return sql, values
 
 
@@ -93,10 +93,8 @@ def delete(tablename, conditions):
 
 def test():
     values = []
-    assert _create_where({
-                             'y': {'eq': 'gatto'}
-                         }, values) == ['`y`=?']
-    assert values == ['gatto']
+    assert _create_where({"y": {"eq": "gatto"}}, values) == ["`y`=?"]
+    assert values == ["gatto"]
 
 
 if __name__ == "__main__":

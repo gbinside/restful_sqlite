@@ -1,4 +1,4 @@
-from Queue import Queue, Empty
+from queue import Queue, Empty
 from threading import Thread
 import sqlite3 as sqlite
 import collections
@@ -67,7 +67,7 @@ class DbThread(Thread):
 
 
 def test():
-    print "TESTS"
+    print("TESTS")
     db = DbThread(':memory:')
     db.start()
     assert db.execute('CREATE TABLE prova (x INTEGER PRIMARY KEY ASC, y, z);') == []
@@ -79,7 +79,7 @@ def test():
     assert db.execute("INSERT INTO prova (y,z) VALUES (1,'cane');", nowait=True) is None
 
     db.close()
-    print "OK"
+    print("OK")
 
 
 if __name__ == "__main__":

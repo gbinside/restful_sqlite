@@ -6,7 +6,7 @@ import json
 import sys
 
 
-DATABASE = ':memory:'
+DATABASE = ":memory:"
 
 app = Flask(__name__)
 
@@ -19,35 +19,37 @@ def get_data():
         data = request.get_data()
     if not data:
         try:
-            data = request.form.keys()[0]
+            data = list(request.form.keys())[0]
         except IndexError:
-            data = '{}'
+            data = "{}"
     return data
 
 
 # DEBUG
 
-@app.route("/debug", methods=['GET', 'POST', 'PUT', 'DELETE'])
+
+@app.route("/debug", methods=["GET", "POST", "PUT", "DELETE"])
 def debug():
     ret = []
     for k in dir(request):
         try:
-            ret.append(('[%s] => ' % k) + repr(getattr(request, k)))
+            ret.append(("[%s] => " % k) + repr(getattr(request, k)))
         except TypeError as e:
-            ret.append('[%s] => TypeError' % k)
-    print '*' * 79
-    print '\n'.join(ret)
-    print '*' * 79
+            ret.append("[%s] => TypeError" % k)
+    print("*" * 79)
+    print("\n".join(ret))
+    print("*" * 79)
     data = get_data()
-    print 'data => ', repr(data)
-    print '*' * 79
-    return '\n'.join(ret)
+    print("data => ", repr(data))
+    print("*" * 79)
+    return "\n".join(ret)
 
 
 # API V1/V2
 
-@app.route("/v2", methods=['GET'])
-@app.route("/v1", methods=['GET'])
+
+@app.route("/v2", methods=["GET"])
+@app.route("/v1", methods=["GET"])
 def list_tables():
     """
     list tables
@@ -63,8 +65,8 @@ def list_tables():
         return str(ret)
 
 
-@app.route('/v2/<tablename>/schema', methods=['DELETE'])
-@app.route('/v1/<tablename>/drop')
+@app.route("/v2/<tablename>/schema", methods=["DELETE"])
+@app.route("/v1/<tablename>/drop")
 def drop_table(tablename):
     ret = app.db.execute(sql_helper.drop_table(tablename))
     try:
@@ -73,8 +75,8 @@ def drop_table(tablename):
         return str(ret)
 
 
-@app.route('/v2/<tablename>', methods=['POST'])
-@app.route('/v1/<tablename>/insert', methods=['POST'])
+@app.route("/v2/<tablename>", methods=["POST"])
+@app.route("/v1/<tablename>/insert", methods=["POST"])
 def insert_into_table(tablename):
     """
     insert a record into a table
@@ -93,13 +95,13 @@ def insert_into_table(tablename):
         return str(ret)
 
 
-@app.route('/v2/<tablename>', methods=['PUT'])
-@app.route('/v1/<tablename>/update', methods=['POST'])
+@app.route("/v2/<tablename>", methods=["PUT"])
+@app.route("/v1/<tablename>/update", methods=["POST"])
 def update_table(tablename):
     post_data = json.loads(get_data())
 
-    data = post_data['data']
-    conditions = post_data['conditions']
+    data = post_data["data"]
+    conditions = post_data["conditions"]
     sql, values = sql_helper.update(tablename, conditions, data)
 
     ret = app.db.execute(sql, values)
@@ -109,8 +111,8 @@ def update_table(tablename):
         return str(ret)
 
 
-@app.route('/v2/<tablename>/schema', methods=['GET'])
-@app.route('/v1/<tablename>', methods=['GET'])
+@app.route("/v2/<tablename>/schema", methods=["GET"])
+@app.route("/v1/<tablename>", methods=["GET"])
 def get_table_schema(tablename):
     """
     get the table schema
@@ -126,8 +128,8 @@ def get_table_schema(tablename):
         return str(ret)
 
 
-@app.route('/v2/<tablename>/schema', methods=['POST'])
-@app.route('/v1/<tablename>', methods=['POST'])
+@app.route("/v2/<tablename>/schema", methods=["POST"])
+@app.route("/v1/<tablename>", methods=["POST"])
 def create_table(tablename):
     """
     create a table
@@ -145,8 +147,8 @@ def create_table(tablename):
         return str(ret)
 
 
-@app.route('/v2/<tablename>', methods=['GET'])
-@app.route('/v1/<tablename>/select', methods=['GET', 'POST'])
+@app.route("/v2/<tablename>", methods=["GET"])
+@app.route("/v1/<tablename>/select", methods=["GET", "POST"])
 def select_from_table(tablename):
     """
     select FORM table
@@ -155,7 +157,7 @@ def select_from_table(tablename):
 
     """
     post_data = json.loads(get_data())
-    conditions = post_data.get('conditions', {})
+    conditions = post_data.get("conditions", {})
 
     sql, values = sql_helper.select(tablename, conditions)
     if values:
@@ -168,9 +170,8 @@ def select_from_table(tablename):
         return str(e)
 
 
-
-@app.route('/v2/<tablename>', methods=['DELETE'])
-@app.route('/v1/<tablename>/delete', methods=['POST'])
+@app.route("/v2/<tablename>", methods=["DELETE"])
+@app.route("/v1/<tablename>/delete", methods=["POST"])
 def delete_from_table(tablename):
     """
     select FORM table
@@ -179,7 +180,7 @@ def delete_from_table(tablename):
 
     """
     post_data = json.loads(get_data())
-    conditions = post_data['conditions']
+    conditions = post_data["conditions"]
 
     sql, values = sql_helper.delete(tablename, conditions)
     ret = app.db.execute(sql, values)
@@ -199,5 +200,4 @@ def delete_from_table(tablename):
 if __name__ == "__main__":
     app.db = DbThread(DATABASE, timeout=10)
     app.db.start()
-    app.run(host='0.0.0.0', debug='debug' in sys.argv, port=8080)
-
+    app.run(host="0.0.0.0", debug="debug" in sys.argv, port=8080)

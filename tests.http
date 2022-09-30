@@ -1,0 +1,31 @@
+###
+
+DELETE http://localhost:8080/v2/cats/schema HTTP/1.1
+
+###
+
+POST http://localhost:8080/v2/cats/schema HTTP/1.1
+content-type: application/json
+
+{
+    "name": "VARCHAR",
+    "race": "VARCHAR"
+}
+
+###
+
+GET http://localhost:8080/v2/cats/schema HTTP/1.1
+
+###
+
+POST http://localhost:8080/v2/cats HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Ares",
+    "race": "Sphinx rex"
+}
+
+### 
+
+GET http://localhost:8080/v2/cats HTTP/1.1
